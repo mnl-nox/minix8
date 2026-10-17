@@ -1,0 +1,195 @@
+name: CI and release
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: ['**']
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: minix8-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  commits:
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Validate commit subjects
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          if [ "$EVENT_NAME" = pull_request ]; then
+            python scripts/check_commits.py "$BASE_SHA" "$HEAD_SHA"
+          else
+            python scripts/check_commits.py "$BEFORE_SHA" "$HEAD_SHA"
+          fi
+
+  build:
+    name: Build (${{ matrix.os }})
+    needs: commits
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            artifact: minix8-linux-x86_64
+            binary: build/minix8
+          - os: macos-14
+            artifact: minix8-macos-arm64
+            binary: build/minix8
+          - os: windows-2022
+            artifact: minix8-windows-x86_64
+            binary: build/Release/minix8.exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+      - name: Compile
+        run: cmake --build build --config Release --parallel
+      - name: Run CTest
+        run: ctest --test-dir build --build-config Release --output-on-failure
+      - name: Prepare downloadable binary (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp "${{ matrix.binary }}" "dist/${{ matrix.artifact }}"
+      - name: Prepare downloadable binary (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item "${{ matrix.binary }}" "dist/${{ matrix.artifact }}.exe"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 30
+
+  qa:
+    name: QA and sanitizers
+    needs: commits
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Unit, CLI integration, AddressSanitizer and UBSan
+        run: make qa
+
+  linux-distros:
+    name: Linux build (${{ matrix.distro }})
+    needs: commits
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - distro: Debian stable
+            image: debian:stable-slim
+            install: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends gcc make
+          - distro: Fedora
+            image: fedora:latest
+            install: dnf install -y gcc make
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile on ${{ matrix.distro }}
+        env:
+          IMAGE: ${{ matrix.image }}
+          INSTALL_COMMAND: ${{ matrix.install }}
+        run: |
+          docker run --rm \
+            -v "$PWD:/src" -w /src "$IMAGE" \
+            sh -ec "$INSTALL_COMMAND && make clean && make"
+
+  release:
+    name: Publish versioned release
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [commits, qa, build, linux-distros]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Decide whether this commit creates a release
+        id: version
+        shell: bash
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          if [[ "$BEFORE_SHA" =~ ^0+$ ]]; then
+            commits="$GITHUB_SHA"
+          else
+            commits="$(git rev-list "$BEFORE_SHA..$GITHUB_SHA")"
+          fi
+          bump=""
+          while IFS= read -r commit; do
+            subject="$(git log -1 --format=%s "$commit")"
+            body="$(git log -1 --format=%B "$commit")"
+            if [[ "$subject" =~ !: ]] || grep -q '^BREAKING CHANGE:' <<< "$body"; then
+              bump=major
+              break
+            elif [[ "$subject" =~ ^feat(\([^)]*\))?: ]] && [[ "$bump" != major ]]; then
+              bump=minor
+            fi
+          done <<< "$commits"
+          if [ -n "$bump" ]; then
+            echo "release=true" >> "$GITHUB_OUTPUT"
+            echo "bump=$bump" >> "$GITHUB_OUTPUT"
+          else
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Calculate and push SemVer tag
+        if: steps.version.outputs.release == 'true'
+        id: tag
+        shell: bash
+        run: |
+          latest="$(git tag --list 'v[0-9]*' --sort=-version:refname | head -n 1)"
+          if [ -z "$latest" ]; then latest="v$(sed -n 's/^project(MiniX8 VERSION \([^ ]*\).*/\1/p' CMakeLists.txt)"; fi
+          version="${latest#v}"
+          IFS=. read -r major minor patch <<< "$version"
+          case "${{ steps.version.outputs.bump }}" in
+            major) major=$((major + 1)); minor=0; patch=0 ;;
+            minor) minor=$((minor + 1)); patch=0 ;;
+            *) echo "No valid release bump was selected." >&2; exit 1 ;;
+          esac
+          tag="v${major}.${minor}.${patch}"
+          if git rev-parse "$tag" >/dev/null 2>&1; then echo "Tag $tag already exists" >&2; exit 1; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$tag" "$GITHUB_SHA" -m "Release $tag"
+          git push origin "$tag"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+      - uses: actions/download-artifact@v4
+        if: steps.version.outputs.release == 'true'
+        with:
+          path: dist
+          merge-multiple: false
+      - name: Create GitHub release with platform builds
+        if: steps.version.outputs.release == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: MiniX8 ${{ steps.tag.outputs.tag }}
+          generate_release_notes: true
+          files: dist/**/*

@@ -1,0 +1,10 @@
+.vscode
+build/
+src/output/
+cmake-build-*/
+minix8
+minix8.exe
+*.o
+*.obj
+*.bin
+dist/
