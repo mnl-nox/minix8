@@ -123,6 +123,10 @@ BusyBox e MiniX8 pronto para iniciar. O sistema live é um hospedeiro Linux
 mínimo para a CPU virtual de 8 bits, não um OS histórico independente. Consulte
 o [guia da VM](docs/BOOTABLE_VM.md) e as [ferramentas necessárias](docs/TOOLS.md).
 
+## Licença e componentes de terceiros
+
+O código original do MiniX8 é distribuído sob a **GNU General Public License v3.0 ou posterior (GPL-3.0-or-later)**. Consulte o arquivo [LICENSE](LICENSE). A licença exige que redistribuições de obras derivadas abrangidas mantenham as liberdades previstas pela GPL e cumpram as condições de disponibilização do código-fonte aplicáveis. Componentes externos incluídos na ISO live mantêm suas próprias licenças; veja [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). A auditoria das versões exatas e dos códigos-fonte dos componentes da ISO live deve acompanhar cada release.
+
 ## Documentação e contribuição
 
 - [Arquitetura da máquina](docs/ARCHITECTURE.md): componentes, ciclo de CPU e limites implementados.
