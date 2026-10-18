@@ -29,7 +29,7 @@ O job de release verifica todos os commits entre a última tag SemVer e o `HEAD`
 - qualquer assunto Conventional Commit terminado em `!:` ou um rodapé `BREAKING CHANGE:` incrementa MAJOR;
 - os demais tipos apenas compilam e não criam release.
 
-Ao incrementar MAJOR ou MINOR, os componentes inferiores voltam a zero. A tag mais alta `vMAJOR.MINOR.PATCH` serve de base. Na primeira publicação, o workflow usa diretamente a versão de `CMakeLists.txt` (atualmente `1.0.0`); nas seguintes, aplica o incremento SemVer. O job cria uma tag anotada `vX.Y.Z` no commit integrado e uma release GitHub com notas geradas automaticamente, três binários e a imagem ISO:
+Ao incrementar MAJOR ou MINOR, os componentes inferiores voltam a zero. A tag mais alta `vMAJOR.MINOR.PATCH` serve de base. Se ainda não houver tag, o workflow usa diretamente a versão de `CMakeLists.txt` como base; nas seguintes, aplica o incremento SemVer. A versão do projeto no código deve ser mantida sincronizada com a release publicada. O job cria uma tag anotada `vX.Y.Z` no commit integrado e uma release GitHub com notas geradas automaticamente, três binários e a imagem ISO:
 
 - `minix8-linux-x86_64` — Ubuntu 22.04;
 - `minix8-macos-arm64` — macOS 14 em Apple Silicon;
