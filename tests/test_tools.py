@@ -49,6 +49,10 @@ class AssemblerTests(unittest.TestCase):
     def test_cycle_counter_mnemonics(self):
         self.assertEqual(ASM_MODULE.assemble("GETCYC\nGETCYH"), bytes([0x25, 0x26]))
 
+    def test_cycle_counter_example_assembles(self):
+        source = (ROOT / "examples" / "cycle_counter.asm").read_text(encoding="utf-8")
+        self.assertEqual(ASM_MODULE.assemble(source), bytes([0x25, 0x06, 0x00, 0xFF, 0x26, 0x06, 0x01, 0xFF, 0x1A]))
+
     def test_utf8_string_may_contain_delimiters(self):
         self.assertEqual(ASM_MODULE.assemble('DB "ação, ok; sim"'), 'ação, ok; sim'.encode())
 
