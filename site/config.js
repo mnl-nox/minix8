@@ -1,0 +1,2 @@
+window.MINIX8_REPOSITORY = "__REPOSITORY__";
+window.MINIX8_VERSION = "__VERSION__";

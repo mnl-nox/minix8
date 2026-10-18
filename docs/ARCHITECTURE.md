@@ -24,7 +24,8 @@ O contador de ciclos é um contador de instruções tentadas, não uma simulaç�
 ## Decisões e limites atuais
 
 - Sem MMU, modos privilegiados, interrupções, DMA, temporizadores ou periféricos de vídeo/áudio.
-- Sem montagem/assembler embutido: desenvolvedores podem gerar os bytes com qualquer assembler ou ferramenta externa, segundo [ISA.md](ISA.md).
+- `tools/minix8_as.py` gera assembly da ISA virtual; não é assembly nativo do host. O núcleo C11 portátil permanece o backend para todos os sistemas.
+- Sem MMU, permissões de memória por ROM ou isolamento de processos; ROMs são limitadas ao modelo de 64 KiB e ao orçamento de instruções, mas execute apenas código de procedência confiável se a integridade do processo hospedeiro for importante.
 - Sem temporização de console e sem modo raw de terminal; IN usa a semântica de stdin do sistema hospedeiro.
 - Reset limpa RAM e estado da CPU. Carregar uma ROM no monitor define PC para a origem e remove o estado de HLT/falha, preservando os demais registradores.
 - O carregador valida o tamanho e a leitura completa antes de copiar bytes para RAM; ROM grande ou com erro de I/O não altera a memória existente.

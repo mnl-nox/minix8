@@ -108,6 +108,8 @@ static void test_invalid_opcode_and_halt(void) {
 }
 
 int main(void) {
+    CHECK(minix8_step(NULL) == -1, "step rejects a null machine pointer");
+    minix8_reset(NULL);
     test_reset_and_load_immediate();
     test_arithmetic_flags();
     test_memory_and_branch();

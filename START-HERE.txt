@@ -1,0 +1,25 @@
+MINIX8 — SOFTWARE EDITION / RETRO COMPUTER 1987
+================================================
+
+1. Mount this ISO or extract it to a folder.
+2. Linux: run `sh START-UNIX.sh`. macOS Apple Silicon: `sh START-UNIX.sh`.
+   Windows: run START-WINDOWS.bat.
+3. The included HELLO.ROM is loaded in the monitor; type G and press Enter
+   to run it. It prints "Oi!" and halts.
+4. Type HELP or ? at minix8> to list the monitor commands.
+5. For the desktop interface, run `sh START-UNIX.sh --gui` or
+   START-WINDOWS.bat --gui. Python 3 + Tkinter and a desktop are required.
+
+Read docs/USER_GUIDE.md for the guided first run and docs/COMMANDS.md for the
+full command and CPU instruction reference. Use
+`python3 tools/minix8_as.py examples/hello.asm /tmp/hello.rom` to assemble a
+source ROM and `python3 tools/minix8_devices.py` for a read-only inventory of
+devices exposed by the host. Read docs/ASSEMBLY.md and SECURITY_AUDIT.md for
+assembler syntax, security boundaries, and validation details.
+
+BUILD-INFO.txt identifies the version and source revision. MANIFEST.sha256
+records checksums for the files on this disc.
+
+This is an ISO9660 DATA DISC, not bootable media and not an operating system.
+The emulator runs as a program on the host OS. Use a matching host binary.
+The 1987 design is an homage, not an exact historical computer or OS clone.

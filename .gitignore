@@ -1,9 +1,13 @@
 .vscode
 build/
+dist/
+__pycache__/
+*.py[cod]
 src/output/
 cmake-build-*/
 minix8
 minix8.exe
+hexrom
 *.o
 *.obj
 *.bin

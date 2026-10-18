@@ -31,7 +31,7 @@ podman run --rm -it -v "$PWD:/rom:ro" minix8:local --rom /rom/program.bin
 
 O comando de build executa `make test`; não é necessário repetir a suíte dentro da imagem final. Para rodar a suíte diretamente no host, use `make test`.
 
-No PowerShell, substitua `$PWD` pela sintaxe de caminho do Docker Desktop, por exemplo `${PWD}:/rom:ro`.
+No PowerShell, use a sintaxe de caminho do Docker Desktop, por exemplo `${PWD}:/rom:ro`.
 
 ## Erros de compilação
 
