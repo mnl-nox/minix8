@@ -30,6 +30,7 @@
     reset: "CPU E 64K RAM REINICIADAS · READY",
     mem: "0000: 01 4F 19 01 69 19 01 21 19 1A 00 00 00 00 00 00",
     about: "MINIX8 É UMA DEMONSTRAÇÃO DIDÁTICA EM C11 · RELEASES NA ABA DOWNLOADS",
+    version: "VERSÃO ATUAL: CONSULTE A RELEASE OFICIAL NO GITHUB",
   };
   form.addEventListener("submit", (event) => {
     event.preventDefault();
