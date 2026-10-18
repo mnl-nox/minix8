@@ -9,7 +9,7 @@ O workflow [ci-release.yml](../.github/workflows/ci-release.yml) automatiza vali
 3. CMake compila e roda CTest em três alvos: Ubuntu 22.04 x86-64, macOS 14 ARM64 e Windows Server 2022 x86-64.
 4. O build nativo com Make é compilado em containers Debian stable e Fedora para conferir compatibilidade com distribuições Debian e RPM.
 5. O workflow `docker-image.yml` constrói a imagem Docker em cada PR e push à `main`. O Dockerfile executa `make test`; em seguida, o workflow testa a CLI e confirma o UID sem privilégios do runtime.
-6. O job de release só roda depois que todos os jobs anteriores terminam com sucesso.
+6. O job de release só roda depois que todos os jobs anteriores terminam com sucesso; uma tag/release não deve ser criada manualmente antes de CI verde.
 7. O job `distribution` coleta os três executáveis e cria a ISO 9660 multiplataforma; ela é anexada à release junto com os binários.
 
 ## Site e labels

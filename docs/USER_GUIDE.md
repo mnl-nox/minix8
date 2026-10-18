@@ -39,7 +39,14 @@ Para escrever assembly com rótulos/mnemonics, use o assembler da ISA:
 python3 tools/minix8_as.py examples/hello.asm /tmp/hello.rom
 ```
 
-Veja [ASSEMBLY.md](ASSEMBLY.md) para a sintaxe. Também pode converter bytes
+Exemplo de leitura do contador no assembly:
+
+```asm
+    GETCYC      ; A = byte baixo do contador, após contar esta instrução
+    GETCYH      ; A = byte alto (bits 8–15), após contar esta instrução
+```
+
+Essas instruções são úteis para contagens repetíveis de trabalho; não medem segundos nem geram interrupções. Veja [ASSEMBLY.md](ASSEMBLY.md) para a sintaxe. Também pode converter bytes
 hexadecimais em `.hex`:
 
 ```text

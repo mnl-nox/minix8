@@ -46,6 +46,13 @@ class AssemblerTests(unittest.TestCase):
         source = """start:\n LDA #0x4F\n OUT\n DB \"é\"\n JMP start\n"""
         self.assertEqual(ASM_MODULE.assemble(source), bytes([1, 0x4F, 0x19, 0xC3, 0xA9, 0x0F, 0, 0]))
 
+    def test_cycle_counter_mnemonics(self):
+        self.assertEqual(ASM_MODULE.assemble("GETCYC\nGETCYH"), bytes([0x25, 0x26]))
+
+    def test_cycle_counter_example_assembles(self):
+        source = (ROOT / "examples" / "cycle_counter.asm").read_text(encoding="utf-8")
+        self.assertEqual(ASM_MODULE.assemble(source), bytes([0x25, 0x06, 0x00, 0xFF, 0x26, 0x06, 0x01, 0xFF, 0x1A]))
+
     def test_utf8_string_may_contain_delimiters(self):
         self.assertEqual(ASM_MODULE.assemble('DB "ação, ok; sim"'), 'ação, ok; sim'.encode())
 
@@ -54,7 +61,7 @@ class AssemblerTests(unittest.TestCase):
                          bytes([0x05, 0x34, 0x12, 0x06, 0xFF, 0xFF]))
 
     def test_rejects_unknown_or_out_of_range_syntax(self):
-        for source in ("EXEC 1", "LDA #256", "JMP 65536", "PUSH B", "MOV A,D,B"):
+        for source in ("EXEC 1", "LDA #256", "JMP 65536", "PUSH B", "MOV A,D,B", "GETCYC A"):
             with self.subTest(source=source), self.assertRaises(ValueError):
                 ASM_MODULE.assemble(source)
 

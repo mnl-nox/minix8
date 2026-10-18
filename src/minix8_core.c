@@ -114,6 +114,8 @@ int minix8_step(Minix8Machine *m) {
     case 0x22: m->c = m->a; set_zn(m, m->c); break;
     case 0x23: m->a = m->d; set_zn(m, m->a); break;
     case 0x24: m->d = m->a; set_zn(m, m->d); break;
+    case 0x25: m->a = (uint8_t)m->cycles; set_zn(m, m->a); break;
+    case 0x26: m->a = (uint8_t)(m->cycles >> 8); set_zn(m, m->a); break;
     default: {
         char reason[64];
         snprintf(reason, sizeof(reason), "opcode %02X inválido", op);

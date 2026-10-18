@@ -97,6 +97,15 @@ static void test_call_return_and_stack_faults(void) {
     CHECK(step(&m) == -1 && m.faulted, "PUSH beyond full stack faults safely");
 }
 
+static void test_cycle_counter_instructions(void) {
+    Machine m;
+    reset(&m); m.ram[0] = 0x25;
+    CHECK(step(&m) == 1 && m.a == 1 && m.cycles == 1, "GETCYC reads the low byte including its own instruction");
+    reset(&m); m.cycles = 0x12ff; m.ram[0] = 0x26;
+    CHECK(step(&m) == 1 && m.a == 0x13 && m.cycles == 0x1300, "GETCYH reads the high byte after counter rollover");
+    CHECK(m.flags == 0, "cycle counter reads update Z/N flags");
+}
+
 static void test_invalid_opcode_and_halt(void) {
     Machine m;
     reset(&m); m.ram[0] = 0xff;
@@ -115,6 +124,7 @@ int main(void) {
     test_memory_and_branch();
     test_logic_shifts_and_moves();
     test_call_return_and_stack_faults();
+    test_cycle_counter_instructions();
     test_invalid_opcode_and_halt();
     if (failures) {
         fprintf(stderr, "%d core test(s) failed.\n", failures);

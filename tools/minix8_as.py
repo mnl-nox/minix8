@@ -18,6 +18,7 @@ SIMPLE = {
     "POP": (0x17, 1), "IN": (0x18, 1), "OUT": (0x19, 1),
     "HLT": (0x1A, 1), "INC": (0x1B, 1), "DEC": (0x1C, 1),
     "SHL": (0x1D, 1), "SHR": (0x1E, 1),
+    "GETCYC": (0x25, 1), "GETCYH": (0x26, 1),
 }
 IMM = {"LDA": 1, "LDB": 2, "LDC": 3, "LDD": 4}
 MEM = {"LDA": 0x05, "STA": 0x06, "LDB": 0x07, "STB": 0x08}
@@ -161,7 +162,7 @@ def encode(lines: list[Line], symbols: dict[str, int]) -> bytes:
         op, operand, number = line.operation, line.operand, line.number
         if op in SIMPLE:
             opcode, _ = SIMPLE[op]
-            if op in ("PUSH", "POP", "IN", "OUT", "INC", "DEC", "SHL", "SHR") and operand.upper() not in ("", "A"):
+            if op in ("PUSH", "POP", "IN", "OUT", "INC", "DEC", "SHL", "SHR", "GETCYC", "GETCYH") and operand.upper() not in ("", "A"):
                 raise AssemblyError(f"linha {number}: {op} usa o registrador A")
             if op not in ("PUSH", "POP", "IN", "OUT", "INC", "DEC", "SHL", "SHR") and operand:
                 raise AssemblyError(f"linha {number}: {op} não recebe operando")

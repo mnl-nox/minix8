@@ -22,7 +22,8 @@ O inventário pode listar categorias como armazenamento, rede, entrada, áudio, 
 | Terminal/TTY | Entrada e saída byte a byte por `IN`/`OUT`; sem registradores de dispositivo | Formalizar UART virtual, baud/timing opcionais e buffers limitados. |
 | Teclado | Não há dispositivo independente; texto enviado pela GUI alimenta `IN` | Eventos de tecla normalizados ligados a uma UART/console virtual. |
 | Vídeo/framebuffer | Não há framebuffer; GUI é apenas painel de controle | Dispositivo framebuffer com formato, dimensões, limites de memória e atualização documentados. |
-| Temporizador/interrupções | Não há temporizador nem interrupções; ciclos contam instruções tentadas | Timer determinístico de instruções e fila de eventos antes de considerar interrupções. |
+| Contador de instruções | Parcial: `GETCYC` (`0x25`) lê os bits 0–7 e `GETCYH` (`0x26`) os bits 8–15 do contador de instruções, incluindo a instrução de leitura | Já disponível para loops e contagens determinísticas; não equivale a tempo de parede nem a um timer de hardware. | 
+| Timer/interrupções | Não implementado | Adicionar timer virtual e fila determinística de eventos, com comportamento de reset e limites testados, antes de considerar interrupções. |
 | Armazenamento em bloco | Não há disco virtual, filesystem guest ou passthrough | Imagem de disco explicitamente selecionada, operações limitadas por faixa e somente sobre o arquivo da VM. |
 | Rede | Não há NIC, pilha TCP/IP, sockets ou tráfego de pacotes do guest | Adaptador virtual mediado pelo host (por exemplo, backend UDP ou rede isolada), com permissões explícitas e limites de tráfego. |
 | Áudio, USB, Bluetooth, sensores | Não há emulação nem passthrough | Interfaces virtuais por classe, cada uma com especificação, autorização, limites e testes próprios. |
@@ -59,4 +60,4 @@ Drivers de MINIX 3 rodam como componentes de seu próprio sistema, usam APIs e p
 - [MINIX 3 em QEMU/KVM](https://wiki.minix3.org/doku.php?id=usersguide:runningonqemu): exemplo de dispositivos virtio em MINIX 3.
 - [Livros e outras referências](REFERENCES.md).
 
-Veja também [TOOLS.md](TOOLS.md), [ARCHITECTURE.md](ARCHITECTURE.md) e [SECURITY_AUDIT.md](../SECURITY_AUDIT.md).
+Veja também o [roadmap e issues de implementação](ROADMAP.md), [TOOLS.md](TOOLS.md), [ARCHITECTURE.md](ARCHITECTURE.md) e [SECURITY_AUDIT.md](../SECURITY_AUDIT.md).

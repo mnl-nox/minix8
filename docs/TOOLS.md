@@ -17,8 +17,8 @@
 
 Linux x86-64 é necessário para criar a imagem VM. O build precisa de kernel
 Linux, BusyBox estático, compilador C com biblioteca estática, Python 3, gzip,
-`grub-mkimage` e módulos GRUB `x86_64-efi`. `grub-mkrescue`, `grub-pc-bin` e
-`xorriso` são usados para acrescentar boot BIOS; sem esse conjunto a mídia local
+`grub-mkimage` e módulos GRUB `x86_64-efi`. `grub-mkrescue`, `grub-pc-bin`, `mtools` e
+`xorriso` são usados para montar a ISO híbrida com boot BIOS/UEFI; sem esse conjunto a mídia local
 pode ser apenas UEFI. O CI prepara esses pacotes e também inclui kernel e
 BusyBox no initramfs.
 

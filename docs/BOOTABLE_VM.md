@@ -39,7 +39,7 @@ em RAM, alterações não são persistentes e desligar descarta os arquivos.
 Build local Linux requer compilador C com suporte a link estático, BusyBox
 (preferencialmente `busybox-static`), kernel x86-64 em `/boot`, GRUB EFI
 (`grub-mkimage`, módulos x86_64-efi), Python 3 e gzip. `grub-mkrescue`,
-`grub-pc-bin` e `xorriso` habilitam também BIOS e a criação da ISO híbrida.
+`grub-pc-bin`, `mtools` e `xorriso` habilitam a criação da ISO híbrida e o suporte de boot BIOS/UEFI.
 
 ```sh
 make boot-iso
