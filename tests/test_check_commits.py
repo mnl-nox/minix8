@@ -55,7 +55,7 @@ class CheckCommitsTests(unittest.TestCase):
 
         result = self.check(self.base, "HEAD")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("Validated 2 non-merge commit(s).", result.stdout)
+        self.assertIn("Validated 2 non-merge commit subject(s).", result.stdout)
 
     def test_invalid_non_merge_subject_still_fails(self):
         bad = self.commit("bad subject", "invalid\n")
@@ -68,7 +68,7 @@ class CheckCommitsTests(unittest.TestCase):
         zero = "0" * 40
         result = self.check(zero, "HEAD")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("Validated 1 non-merge commit(s).", result.stdout)
+        self.assertIn("Validated 1 non-merge commit subject(s).", result.stdout)
 
 
 if __name__ == "__main__":
