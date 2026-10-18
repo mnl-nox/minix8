@@ -105,7 +105,7 @@ jobs:
         include:
           - distro: Debian stable
             image: debian:stable-slim
-            install: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends gcc make
+            install: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends gcc make libc6-dev
           - distro: Fedora
             image: fedora:latest
             install: dnf install -y gcc make
