@@ -81,7 +81,7 @@ class CliTests(unittest.TestCase):
             rom.write_bytes(bytes(65537))
             result = self.run_cli("--rom", rom)
         self.assertEqual(result.returncode, 1)
-        self.assertIn("excede a memória", result.stderr)
+        # Keep this assertion ASCII-only: Windows may encode redirected stderr\n        # with its active code page instead of UTF-8.\n        self.assertIn("excede a", result.stderr)
 
     def test_monitor_rejects_invalid_writes_and_preserves_ram_on_bad_load(self):
         with tempfile.TemporaryDirectory() as tmp:
