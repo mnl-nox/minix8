@@ -27,6 +27,7 @@ start:
 - Loads/stores absolutos: `LDA 0x1234`, `STA 0x1234`; saltos e CALL aceitam
   rótulos ou endereços absolutos de 16 bits.
 - `MOV A,B` aceita apenas os pares existentes na ISA.
+- `GETCYC` coloca em A os 8 bits baixos do contador de instruções; `GETCYH` coloca em A os bits 8–15. O contador é incrementado antes da execução de cada instrução. Esses mnemonics não recebem operandos.
 - `DB 0x01, 2, "UTF-8"` insere bytes; strings são codificadas em UTF-8 e não
   recebem terminador NUL automático.
 - `;` inicia comentários fora de strings. Endereço de origem opcional:
