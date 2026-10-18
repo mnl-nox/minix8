@@ -46,6 +46,9 @@ class AssemblerTests(unittest.TestCase):
         source = """start:\n LDA #0x4F\n OUT\n DB \"é\"\n JMP start\n"""
         self.assertEqual(ASM_MODULE.assemble(source), bytes([1, 0x4F, 0x19, 0xC3, 0xA9, 0x0F, 0, 0]))
 
+    def test_cycle_counter_mnemonics(self):
+        self.assertEqual(ASM_MODULE.assemble("GETCYC\\nGETCYH"), bytes([0x25, 0x26]))
+
     def test_utf8_string_may_contain_delimiters(self):
         self.assertEqual(ASM_MODULE.assemble('DB "ação, ok; sim"'), 'ação, ok; sim'.encode())
 
