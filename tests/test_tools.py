@@ -57,7 +57,7 @@ class AssemblerTests(unittest.TestCase):
                          bytes([0x05, 0x34, 0x12, 0x06, 0xFF, 0xFF]))
 
     def test_rejects_unknown_or_out_of_range_syntax(self):
-        for source in ("EXEC 1", "LDA #256", "JMP 65536", "PUSH B", "MOV A,D,B"):
+        for source in ("EXEC 1", "LDA #256", "JMP 65536", "PUSH B", "MOV A,D,B", "GETCYC A"):
             with self.subTest(source=source), self.assertRaises(ValueError):
                 ASM_MODULE.assemble(source)
 
