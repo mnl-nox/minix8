@@ -2,11 +2,12 @@
 
 Este roadmap distingue o que está implementado do que está planejado. A detecção de hardware do sistema hospedeiro é informativa e somente leitura; ela não torna esses dispositivos acessíveis à CPU virtual.
 
-## Entregável desta etapa
+## Entregável publicado — v1.1.0
 
-- **Implementado nesta branch:** `GETCYC` (`0x25`) e `GETCYH` (`0x26`) expõem os 16 bits inferiores do contador de instruções. A leitura inclui a instrução atual e atualiza as flags N/Z.
+- **Implementado:** `GETCYC` (`0x25`) e `GETCYH` (`0x26`) expõem os 16 bits inferiores do contador de instruções. A leitura inclui a instrução atual e atualiza as flags N/Z.
 - **Uso:** `GETCYC` lê bits 0–7; `GETCYH` lê bits 8–15. São contagens determinísticas de instruções, não segundos, relógio de parede, timer independente ou interrupções.
-- **Validação:** os testes de núcleo cobrem a leitura e o rollover; os testes do assembler garantem codificação e rejeição de operandos inválidos. O merge depende de CI verde.
+- **Validação:** testes de núcleo, assembler e exemplo executável passaram; CI de Linux/macOS/Windows, QA/sanitizers, Debian/Fedora, container e geração das duas ISOs passaram.
+- **Release:** [MiniX8 v1.1.0](https://github.com/mnl-nox/minix8/releases/tag/v1.1.0). O exemplo `examples/cycle_counter.asm` grava os bytes em `0xFF00` e `0xFF01` para inspeção no monitor.
 
 ## Próximas etapas
 
