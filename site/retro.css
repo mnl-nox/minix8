@@ -1,0 +1,45 @@
+/* 1987 terminal skin: phosphor, hard edges, beveled panels and pixel-grid details. */
+body{background-color:#0b1009;background-image:linear-gradient(rgba(191,244,119,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(191,244,119,.025) 1px,transparent 1px);background-size:4px 4px}
+body:before{background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.13) 3px 4px);opacity:.46}
+.topbar{border-bottom:2px solid #35402f;box-shadow:0 3px 0 #080b07}
+.brand-logo{image-rendering:pixelated;filter:drop-shadow(0 0 6px #c0f47744)}
+.button,.issue-link,.spec-card,.code-panel,.terminal-panel,.doc-grid>a,.computer-screen{border-radius:0}
+.button{box-shadow:3px 3px 0 #050705}
+.button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #050705}
+.computer-screen{border-radius:12px 12px 2px 2px;box-shadow:inset 0 0 28px #8dc55328,0 0 0 3px #626a53,7px 7px 0 #050705}
+.ticker{box-shadow:0 4px 0 #080b07,0 -4px 0 #080b07;font-weight:bold}
+.spec-card{background:#151a13;border:2px solid #48523c;box-shadow:4px 4px 0 #080b07}
+.spec-card strong{text-shadow:0 0 10px #c0f47777}
+.code-panel,.terminal-panel{border:2px solid #35402f;box-shadow:4px 4px 0 #080b07}
+.terminal-panel{box-shadow:inset 0 0 24px #a2d77112,4px 4px 0 #080b07}
+.download-section{border-block:4px solid #829958;box-shadow:inset 0 0 24px #11150f33}
+.doc-grid{border-top:2px solid var(--line);border-left:2px solid var(--line)}
+.doc-grid>a{background:#121710}
+.doc-grid>a:hover{box-shadow:inset 0 0 0 2px var(--green);background:#182015}
+.issue-banner{border-block:2px solid #536447}
+
+.workstation-section{max-width:1080px}
+.workstation{border:3px solid #647052;background:#242b1f;box-shadow:7px 7px 0 #050705,0 0 28px #a4d87612}
+.workstation-bar{height:36px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 12px;background:#c0f477;color:#151b10;font:10px var(--mono);letter-spacing:.08em;border-bottom:3px solid #647052}
+.window-buttons{font-size:13px;letter-spacing:.3em}
+.workstation-body{display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:12px;padding:14px}
+.workstation-label{font:9px var(--mono);letter-spacing:.12em;color:#9db482;margin:0 0 8px}
+.workstation-screen{min-height:205px;padding:15px;background:#080d07;border:2px solid #516143;color:#c0f477;font:11px/1.8 var(--mono);box-shadow:inset 0 0 24px #a9e67b1b}
+.workstation-screen p{margin:0;text-shadow:0 0 7px #c0f47755}
+.pixel-prompt{margin-top:18px!important}.pixel-prompt span{animation:blink 1s steps(2,start) infinite}
+.workstation-command{display:flex;gap:12px;padding:10px 5px 0;color:var(--green);font:10px var(--mono)}
+.workstation-command i{color:#8b987e;font-style:normal}
+.workstation-side{padding-left:12px;border-left:1px solid #414b35}
+.register-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:22px}
+.register-grid span,.mini-rom{padding:8px;background:#11160f;border:1px solid #414b35;color:#a4b793;font:10px var(--mono)}
+.register-grid b{color:var(--green);float:right}
+.mini-rom{color:var(--green);line-height:1.8;letter-spacing:.12em}
+.workstation-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 14px;border-top:2px solid #46513a;background:#1a2016}
+.workstation-controls span{padding:7px 9px;border:1px solid #647052;background:#11160f;color:#c8d5b8;font:8px var(--mono);letter-spacing:.05em}
+.workstation-controls b{margin-left:auto;color:var(--green);font:9px var(--mono)}
+.workstation-caption{display:flex;align-items:center;justify-content:space-between;gap:25px;margin-top:22px;color:var(--muted);font-size:12px}
+.workstation-caption p{margin:0;max-width:580px}
+
+@media(max-width:800px){.workstation-body{grid-template-columns:1fr}.workstation-side{border-left:0;border-top:1px solid #414b35;padding:12px 0 0}.register-grid{grid-template-columns:repeat(3,1fr)}.workstation-caption{align-items:flex-start;flex-direction:column}}
+@media(max-width:480px){.workstation-bar{font-size:7px;padding-inline:7px}.workstation-body{padding:8px}.workstation-screen{padding:9px;font-size:8px;min-height:178px}.workstation-controls span{font-size:7px;padding:6px}.workstation-controls b{width:100%;margin:4px 0 0}}
+@media(prefers-reduced-motion:reduce){.pixel-prompt span{animation:none}}

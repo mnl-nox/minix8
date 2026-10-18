@@ -41,12 +41,20 @@ static int cpu_fault(Minix8Machine *m, uint16_t at, const char *reason) {
     return -1;
 }
 
+static int output_byte(const Minix8Machine *m, uint8_t byte) {
+    if (m->raw_output || byte == '\n' || byte == '\r' || byte == '\t' || (byte >= 0x20 && byte != 0x7f))
+        return putchar(byte);
+    return printf("\\x%02X", byte) < 0 ? EOF : 0;
+}
+
 void minix8_reset(Minix8Machine *m) {
+    if (m == NULL) return;
     memset(m, 0, sizeof(*m));
     m->sp = 0xffff;
 }
 
 int minix8_step(Minix8Machine *m) {
+    if (m == NULL) return -1;
     if (m->halted) return 0;
     uint16_t at = m->pc;
     uint8_t op = fetch8(m), v;
@@ -93,7 +101,7 @@ int minix8_step(Minix8Machine *m) {
         m->a = ch == EOF ? 0 : (uint8_t)ch; set_zn(m, m->a); break;
     }
     case 0x19:
-        if (putchar(m->a) == EOF || fflush(stdout) == EOF) return cpu_fault(m, at, "falha de escrita em OUT");
+        if (output_byte(m, m->a) == EOF || fflush(stdout) == EOF) return cpu_fault(m, at, "falha de escrita em OUT");
         break;
     case 0x1a: m->halted = 1; break;
     case 0x1b: m->a++; set_zn(m, m->a); break;

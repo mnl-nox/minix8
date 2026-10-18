@@ -1,13 +1,20 @@
 #include <ctype.h>
 #include <errno.h>
 #include <inttypes.h>
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 #include "minix8_core.h"
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #define LINE_SIZE 512
 #define DEFAULT_STEP_LIMIT UINT64_C(1000000)
+#define MAX_STEP_LIMIT UINT64_C(10000000)
 #define RAM_SIZE MINIX8_RAM_SIZE
 #define FLAG_Z MINIX8_FLAG_Z
 #define FLAG_C MINIX8_FLAG_C
@@ -21,7 +28,17 @@ static void registers(const Machine *m) {
         (unsigned long long)m->cycles, m->halted ? " HALT" : "");
 }
 static int load_file(Machine *m, const char *path, uint16_t origin) {
+#ifdef _WIN32
+    int wide_size = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, NULL, 0);
+    wchar_t *wide_path = wide_size > 0 ? (wchar_t *)malloc((size_t)wide_size * sizeof(wchar_t)) : NULL;
+    if (!wide_path || !MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, path, -1, wide_path, wide_size)) {
+        free(wide_path); fputs("Caminho UTF-8 inválido.\n", stderr); return 0;
+    }
+    FILE *f = _wfopen(wide_path, L"rb");
+    free(wide_path);
+#else
     FILE *f = fopen(path, "rb");
+#endif
     if (!f) { fprintf(stderr, "Não foi possível abrir %s: %s\n", path, strerror(errno)); return 0; }
     size_t capacity = RAM_SIZE - (size_t)origin;
     uint8_t *buffer = (uint8_t *)malloc(capacity ? capacity : 1);
@@ -32,6 +49,7 @@ static int load_file(Machine *m, const char *path, uint16_t origin) {
     if (ferror(f)) io_error = 1;
     if (fclose(f) != 0) io_error = 1;
     if (io_error) { fprintf(stderr, "Falha de leitura da ROM %s.\n", path); free(buffer); return 0; }
+    if (n == 0) { fprintf(stderr, "ROM vazia: %s\n", path); free(buffer); return 0; }
     if (extra != EOF) { fprintf(stderr, "ROM excede a memória disponível a partir de %04X\n", origin); free(buffer); return 0; }
     memcpy(m->ram + origin, buffer, n);
     free(buffer);
@@ -51,7 +69,7 @@ static int parse_u64(const char *text, uint64_t max, uint64_t *out) {
     return 1;
 }
 static void help(void) {
-    puts("Comandos: help | regs | step [n] | run [n] | reset | load arquivo [endereço] | mem endereço [tamanho] | set endereço byte | quit");
+    puts("Comandos: help/? | regs/r/status | step/trace/t [n] | run/go/g [n] | reset/new | load/l arquivo [endereço] | mem/dump/d endereço [tamanho] | set/poke/p endereço byte | quit/exit/x/q");
 }
 static void monitor(Machine *m) {
     char line[LINE_SIZE]; help();
@@ -66,23 +84,26 @@ static void monitor(Machine *m) {
             continue;
         }
         char *cmd = strtok(line, " \t\r\n"); if (!cmd) continue;
-        if (!strcmp(cmd, "quit") || !strcmp(cmd, "exit")) break;
-        if (!strcmp(cmd, "help")) help();
-        else if (!strcmp(cmd, "regs")) registers(m);
-        else if (!strcmp(cmd, "reset")) { minix8_reset(m); puts("CPU e RAM reiniciadas."); }
-        else if (!strcmp(cmd, "step") || !strcmp(cmd, "run")) {
-            int running = !strcmp(cmd, "run"); char *arg = strtok(NULL, " \t\r\n");
+        for (char *p = cmd; *p; p++) *p = (char)tolower((unsigned char)*p);
+        if (!strcmp(cmd, "quit") || !strcmp(cmd, "exit") || !strcmp(cmd, "x") || !strcmp(cmd, "q")) break;
+        if (!strcmp(cmd, "help") || !strcmp(cmd, "?")) help();
+        else if (!strcmp(cmd, "regs") || !strcmp(cmd, "r") || !strcmp(cmd, "status")) registers(m);
+        else if (!strcmp(cmd, "reset") || !strcmp(cmd, "new")) { minix8_reset(m); puts("CPU e RAM reiniciadas."); }
+        else if (!strcmp(cmd, "step") || !strcmp(cmd, "trace") || !strcmp(cmd, "t") ||
+                 !strcmp(cmd, "run") || !strcmp(cmd, "go") || !strcmp(cmd, "g")) {
+            int running = !strcmp(cmd, "run") || !strcmp(cmd, "go") || !strcmp(cmd, "g");
+            char *arg = strtok(NULL, " \t\r\n");
             uint64_t count = running ? DEFAULT_STEP_LIMIT : 1, executed = 0;
-            if (arg && !parse_u64(arg, UINT64_MAX, &count)) { puts("Quantidade inválida."); continue; }
+            if (arg && !parse_u64(arg, MAX_STEP_LIMIT, &count)) { printf("Quantidade inválida (limite: %llu).\n", (unsigned long long)MAX_STEP_LIMIT); continue; }
             while (executed < count && !m->halted) { if (minix8_step(m) < 0) break; executed++; }
             if (running && !m->halted && executed == count) puts("Limite de instruções alcançado.");
             registers(m);
-        } else if (!strcmp(cmd, "load")) {
+        } else if (!strcmp(cmd, "load") || !strcmp(cmd, "l")) {
             char *path = strtok(NULL, " \t\r\n"), *a = strtok(NULL, " \t\r\n");
             uint64_t origin = 0;
             if (!path || (a && !parse_u64(a, UINT16_MAX, &origin))) puts("Uso: load arquivo [endereço 0..65535]");
             else load_file(m, path, (uint16_t)origin);
-        } else if (!strcmp(cmd, "mem")) {
+        } else if (!strcmp(cmd, "mem") || !strcmp(cmd, "dump") || !strcmp(cmd, "d")) {
             char *a = strtok(NULL, " \t\r\n"), *n = strtok(NULL, " \t\r\n");
             if (!a) { puts("Uso: mem endereço [tamanho]"); continue; }
             uint64_t start64, len64 = 16;
@@ -92,7 +113,7 @@ static void monitor(Machine *m) {
             if (len > RAM_SIZE - start) len = RAM_SIZE - start;
             for (unsigned i = 0; i < len; i++) { if (i % 16 == 0) printf("\n%04X: ", start + i); printf("%02X ", m->ram[start + i]); }
             putchar('\n');
-        } else if (!strcmp(cmd, "set")) {
+        } else if (!strcmp(cmd, "set") || !strcmp(cmd, "poke") || !strcmp(cmd, "p")) {
             char *a = strtok(NULL, " \t\r\n"), *v = strtok(NULL, " \t\r\n");
             uint64_t address, value;
             if (!a || !v || !parse_u64(a, UINT16_MAX, &address) || !parse_u64(v, UINT8_MAX, &value)) puts("Uso: set endereço(0..65535) byte(0..255)");
@@ -101,27 +122,34 @@ static void monitor(Machine *m) {
     }
 }
 static void usage(const char *name) {
-    printf("MiniX8 - computador virtual de 8 bits\nUso: %s [--rom arquivo] [--origin endereço] [--steps limite] [--monitor]\n", name);
+    printf("MiniX8 - computador virtual de 8 bits\nUso: %s [--rom arquivo] [--origin endereço] [--steps limite] [--monitor] [--raw-output]\n", name);
 }
-int main(int argc, char **argv) {
+static int minix8_main(int argc, char **argv) {
+    (void)setlocale(LC_CTYPE, "");
+#ifdef _WIN32
+    (void)SetConsoleCP(CP_UTF8);
+    (void)SetConsoleOutputCP(CP_UTF8);
+#endif
     Machine *m = (Machine *)calloc(1, sizeof(*m)); if (!m) { fputs("Memória insuficiente.\n", stderr); return 1; }
-    minix8_reset(m); const char *rom = NULL; uint64_t origin64 = 0, limit = DEFAULT_STEP_LIMIT; int interactive = 0, origin_set = 0, steps_set = 0;
+    minix8_reset(m); const char *rom = NULL; uint64_t origin64 = 0, limit = DEFAULT_STEP_LIMIT; int interactive = 0, origin_set = 0, steps_set = 0, raw_output = 0;
     for (int i = 1; i < argc; i++) {
         if (!strcmp(argv[i], "--help") || !strcmp(argv[i], "-h")) { usage(argv[0]); free(m); return 0; }
         else if (!strcmp(argv[i], "--monitor") || !strcmp(argv[i], "-i")) interactive = 1;
+        else if (!strcmp(argv[i], "--raw-output")) raw_output = 1;
         else if (!strcmp(argv[i], "--rom") && i + 1 < argc) rom = argv[++i];
         else if (!strcmp(argv[i], "--origin") && i + 1 < argc) {
             if (!parse_u64(argv[++i], UINT16_MAX, &origin64)) { fputs("Endereço de origem inválido (use 0..65535).\n", stderr); free(m); return 2; }
             origin_set = 1;
         }
         else if (!strcmp(argv[i], "--steps") && i + 1 < argc) {
-            if (!parse_u64(argv[++i], UINT64_MAX, &limit) || limit == 0) { fputs("Limite de instruções inválido (deve ser maior que zero).\n", stderr); free(m); return 2; }
+            if (!parse_u64(argv[++i], MAX_STEP_LIMIT, &limit) || limit == 0) { fprintf(stderr, "Limite de instruções inválido (1..%llu).\n", (unsigned long long)MAX_STEP_LIMIT); free(m); return 2; }
             steps_set = 1;
         }
         else { usage(argv[0]); free(m); return 2; }
     }
     if (!rom && origin_set) { fputs("--origin requer --rom.\n", stderr); free(m); return 2; }
     if (!rom && steps_set) { fputs("--steps requer --rom.\n", stderr); free(m); return 2; }
+    m->raw_output = raw_output;
     if (rom && !load_file(m, rom, (uint16_t)origin64)) { free(m); return 1; }
     if (rom && !interactive) {
         uint64_t executed = 0;
@@ -132,3 +160,33 @@ int main(int argc, char **argv) {
     int exit_code = m->faulted ? 1 : 0;
     free(m); return exit_code;
 }
+
+#ifdef _WIN32
+static char *wide_to_utf8(const wchar_t *wide) {
+    int length = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, wide, -1, NULL, 0, NULL, NULL);
+    if (length <= 0) return NULL;
+    char *utf8 = (char *)malloc((size_t)length);
+    if (!utf8 || !WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, wide, -1, utf8, length, NULL, NULL)) {
+        free(utf8); return NULL;
+    }
+    return utf8;
+}
+
+int wmain(int argc, wchar_t **wide_argv) {
+    (void)SetConsoleCP(CP_UTF8);
+    (void)SetConsoleOutputCP(CP_UTF8);
+    char **argv = (char **)calloc((size_t)argc + 1, sizeof(char *));
+    if (!argv) return 1;
+    int failed = 0;
+    for (int i = 0; i < argc; ++i) {
+        argv[i] = wide_to_utf8(wide_argv[i]);
+        if (!argv[i]) { failed = 1; break; }
+    }
+    int result = failed ? 2 : minix8_main(argc, argv);
+    for (int i = 0; i < argc; ++i) free(argv[i]);
+    free(argv);
+    return result;
+}
+#else
+int main(int argc, char **argv) { return minix8_main(argc, argv); }
+#endif

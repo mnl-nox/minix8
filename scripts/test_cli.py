@@ -16,6 +16,8 @@ class CliTests(unittest.TestCase):
             [str(PROGRAM), *map(str, args)],
             input=input_text,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             capture_output=True,
             timeout=10,
             check=False,
@@ -54,11 +56,38 @@ class CliTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Z", result.stdout)
 
+    def test_utf8_console_bytes_round_trip(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            rom = pathlib.Path(tmp) / "utf8.bin"
+            rom.write_bytes(bytes([0x18, 0x19, 0x18, 0x19, 0x1A]))
+            result = self.run_cli("--rom", rom, input_text="é")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("é", result.stdout)
+
+    def test_unicode_rom_path(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            rom = pathlib.Path(tmp) / "mídia-雪.bin"
+            rom.write_bytes(bytes([0x1A]))
+            result = self.run_cli("--rom", rom)
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_terminal_control_bytes_are_escaped_unless_raw_output_selected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            rom = pathlib.Path(tmp) / "control.bin"
+            rom.write_bytes(bytes([0x01, 0x1B, 0x19, 0x01, 0x7F, 0x19, 0x1A]))
+            safe = self.run_cli("--rom", rom)
+            raw = self.run_cli("--rom", rom, "--raw-output")
+        self.assertIn(r"\x1B", safe.stdout)
+        self.assertIn(r"\x7F", safe.stdout)
+        self.assertIn("\x1b", raw.stdout)
+        self.assertIn("\x7f", raw.stdout)
+
     def test_bad_arguments_fail_without_running(self):
         cases = [
             (("--origin", "65536"),),
             (("--origin", "0"),),
             (("--steps", "0"),),
+            (("--steps", "10000001"),),
             (("--steps", "10oops"),),
             (("--rom", "missing.bin", "--origin", "-1"),),
         ]
@@ -81,7 +110,17 @@ class CliTests(unittest.TestCase):
             rom.write_bytes(bytes(65537))
             result = self.run_cli("--rom", rom)
         self.assertEqual(result.returncode, 1)
-        # Keep this assertion ASCII-only: Windows may encode redirected stderr\n        # with its active code page instead of UTF-8.\n        self.assertIn("excede a", result.stderr)
+        # Keep this assertion ASCII-only: Windows may encode redirected stderr
+        # with its active code page instead of UTF-8.
+        self.assertIn("excede a", result.stderr)
+
+    def test_empty_rom_is_rejected(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            rom = pathlib.Path(tmp) / "empty.bin"
+            rom.write_bytes(b"")
+            result = self.run_cli("--rom", rom)
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("ROM vazia", result.stderr)
 
     def test_monitor_rejects_invalid_writes_and_preserves_ram_on_bad_load(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -92,6 +131,17 @@ class CliTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("Uso: set", result.stdout)
         self.assertIn("0000: A5 00", result.stdout)
+
+    def test_retro_monitor_aliases_are_case_insensitive(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            rom = pathlib.Path(tmp) / "halt.bin"
+            rom.write_bytes(bytes([0x1A]))
+            result = self.run_cli("--monitor", "--rom", rom,
+                                  input_text="STATUS\nd 0 1\nT 1\nR\nX\n")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertGreaterEqual(result.stdout.count("PC=0000"), 1)
+        self.assertIn("0000: 1A", result.stdout)
+        self.assertIn("HALT", result.stdout)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,21 @@
+MINIX8 VM LIVE - AJUDA RAPIDA
+
+O ambiente e um Linux live minimo com BusyBox. O nucleo MiniX8 e a CPU
+virtual didatica de 8 bits; nao e um sistema operacional historico.
+
+Comandos do monitor MiniX8:
+  minix8 --monitor                 abre o monitor sem ROM
+  RUN                              abre o monitor com examples/hello.rom
+  minix8 --rom ARQUIVO --monitor  carrega uma ROM propria
+  minix8 --help                    opcoes do emulador
+  hexrom entrada.hex saida.rom    converte texto hexadecimal em ROM
+
+Comandos shell disponiveis (BusyBox): HELP, DIR, CLS, VER, RUN, DEVICES, EXIT,
+ls, cat, cp, mv, rm, mkdir, pwd, vi, grep, find, hexdump, uname, reboot.
+O shell distingue maiusculas de minusculas; aliases retro sao atalhos.
+Arquivos temporarios ficam em RAM e desaparecem ao desligar.
+DEVICES lista a visao parcial do kernel em /sys; a VM nao pode enumerar
+hardware que o hipervisor nao apresentar ao guest.
+
+EXIT encerra o shell; use reboot ou poweroff para desligar a VM.
+Documentacao completa: /usr/share/minix8/docs/.

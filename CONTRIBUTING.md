@@ -20,3 +20,7 @@ As versões iniciais usam `1.0.0` como base definida em `CMakeLists.txt`; portan
 ## Portabilidade
 
 O núcleo depende apenas da biblioteca padrão C. Mantenha o código em C11, evite APIs exclusivas de plataforma e atualize a arquitetura e a ISA quando alterar comportamento visível da máquina. Instruções de build local estão no [README](README.md).
+
+## Issues e labels
+
+Use os formulários em GitHub Issues e associe o tipo (`type: bug`, `type: enhancement`, `type: docs`, `type: question`), área (`area: cpu`, `area: memory`, `area: rom-loader`, `area: monitor`, `area: gui`, `area: packaging`, `area: website`, `area: ci`), prioridade (`priority: critical/high/normal/low`) e estado (`status: needs-triage`, `status: confirmed`, `status: in-progress`, `status: blocked`, `status: wont-fix`) quando aplicável. `good first issue` e `help wanted` destacam contribuições abertas. O workflow `Sync issue labels` cria ou atualiza as labels listadas em `.github/labels.json` sem apagar labels personalizadas.

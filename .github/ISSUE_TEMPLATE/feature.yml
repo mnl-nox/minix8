@@ -1,0 +1,21 @@
+name: Solicitar melhoria
+description: Sugira uma capacidade para o MiniX8.
+title: "feat: "
+labels: ["type: enhancement", "status: needs-triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema que pretende resolver
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Solução ou comportamento proposto
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas e impacto na ISA

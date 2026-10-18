@@ -17,6 +17,7 @@ typedef struct {
     uint16_t pc, sp;
     int halted;
     int faulted;
+    int raw_output;
     uint32_t stack_depth;
     uint64_t cycles;
 } Minix8Machine;

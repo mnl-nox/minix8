@@ -1,0 +1,2 @@
+# Imprime "Oi!" e para a CPU. Cada byte é hexadecimal; espaços e comentários são ignorados.
+01 4F 19 01 69 19 01 21 19 1A

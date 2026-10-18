@@ -6,7 +6,7 @@
 - 64 KiB de RAM endereçável por byte. ROM/binário é carregado a partir de `0x0000` por padrão.
 - Endereços e operandos de 16 bits são little-endian. SP inicia em `0xFFFF`; a pilha cresce para baixo.
 - FLAGS: Z (bit 0, resultado zero), C (bit 1, carry ou indicação de não-borrow), N (bit 2, bit mais alto do resultado).
-- `IN A` lê um byte de stdin (EOF retorna zero); `OUT A` escreve A como caractere em stdout.
+- `IN A` lê um byte de stdin (EOF retorna zero); `OUT A` produz o byte de A. A CLI escapa caracteres ASCII de controle por padrão; `--raw-output` preserva saída byte-a-byte.
 - Uma instrução custa um ciclo no modelo atual. Não há periféricos temporizados.
 - PC avança após cada byte lido e retorna a zero após `0xFFFF`. RAM não é protegida: código, dados e pilha compartilham o mesmo espaço.
 - Os registradores gerais são de 8 bits. A pilha guarda bytes; CALL empilha o endereço de retorno de 16 bits e RET o recupera.
