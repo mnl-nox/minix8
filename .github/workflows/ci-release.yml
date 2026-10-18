@@ -149,9 +149,9 @@ jobs:
             if [[ "$subject" =~ !: ]] || grep -q '^BREAKING CHANGE:' <<< "$body"; then
               bump=major
               break
-            elif [[ "$subject" =~ ^feat(\([^)]*\))?: ]] && [[ "$bump" != major ]]; then
+            elif [[ "$subject" == feat:* || "$subject" == feat\(*\):* ]] && [[ "$bump" != major ]]; then
               bump=minor
-            elif [[ "$subject" =~ ^fix(\([^)]*\))?: ]] && [[ -z "$bump" ]]; then
+            elif [[ "$subject" == fix:* || "$subject" == fix\(*\):* ]] && [[ -z "$bump" ]]; then
               bump=patch
             fi
           done <<< "$commits"
