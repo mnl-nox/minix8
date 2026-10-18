@@ -1,6 +1,6 @@
 # CI/CD e releases
 
-O workflow [ci-release.yml](../.github/workflows/ci-release.yml) automatiza validação, compilação e publicação. Ele não precisa de secrets pessoais: usa o `GITHUB_TOKEN` fornecido pelo GitHub Actions.
+O workflow [ci-release.yml](../.github/workflows/ci-release.yml) automatiza validação, compilação e publicação. O workflow [docker-image.yml](../.github/workflows/docker-image.yml) constrói e valida separadamente a imagem de container. Os workflows não precisam de secrets pessoais: usam o `GITHUB_TOKEN` fornecido pelo GitHub Actions.
 
 ## Em cada pull request e push
 
@@ -8,7 +8,8 @@ O workflow [ci-release.yml](../.github/workflows/ci-release.yml) automatiza vali
 2. O QA executa testes unitários, integração de CLI, análise estática GCC e sanitizers AddressSanitizer/UBSan com `make qa`.
 3. CMake compila e roda CTest em três alvos: Ubuntu 22.04 x86-64, macOS 14 ARM64 e Windows Server 2022 x86-64.
 4. O build nativo com Make é compilado em containers Debian stable e Fedora para conferir compatibilidade com distribuições Debian e RPM.
-5. O job de release só roda depois que todos os jobs anteriores terminam com sucesso.
+5. `docker-image.yml` constrói a imagem definida em `Dockerfile`; o estágio de build executa `make test`, e o workflow verifica a CLI e o UID não privilegiado do container final.
+6. O job de release só roda depois que todos os jobs anteriores terminam com sucesso.
 
 Os artefatos de cada build ficam disponíveis no run do Actions durante 30 dias. A matriz e os artefatos publicados podem ser alterados em `ci-release.yml`.
 
@@ -31,7 +32,7 @@ O executável Linux foi compilado em Ubuntu 22.04 para compatibilidade de glibc 
 ## Como integrar uma feature
 
 1. Faça commits com assunto Conventional Commit.
-2. Abra PR contra `main` e aguarde todos os checks verdes (validação de mensagens, QA com testes/análise/sanitizers, três builds/testes nativos e dois builds Linux em containers).
+2. Abra PR contra `main` e aguarde todos os checks verdes (validação de mensagens, QA com testes/análise/sanitizers, três builds/testes nativos, builds Linux em containers e o build/teste da imagem Docker).
 3. Use **Squash and merge** e mantenha o título do squash no formato Conventional Commit, como `feat(cpu): add rotate instruction`.
 4. O push resultante à `main` executa a publicação se o título começar por `feat` ou indicar breaking change. A tag e a release aparecem na aba Releases do repositório.
 
