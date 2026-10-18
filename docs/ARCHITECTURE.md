@@ -32,7 +32,7 @@ O contador de ciclos é um contador de instruções tentadas, não uma simulaç�
 - Underflow e overflow da pilha são falhas da CPU e retornam status de processo diferente de zero. A pilha tem profundidade máxima de 65.536 bytes.
 - Endereços e limites de execução são analisados sem truncamento; argumentos fora da faixa são rejeitados antes da execução.
 
-Essas escolhas mantêm o núcleo pequeno, previsível e compilável em toolchains C11 comuns. Novas instruções devem receber opcodes não usados, atualizar a tabela de [ISA.md](ISA.md), e preservar a regra de uma instrução por ciclo.
+Essas escolhas mantêm o núcleo pequeno, previsível e compilável em toolchains C11 comuns. A leitura do contador é o primeiro primitivo de temporização da ISA, não substitui um timer de tempo real, eventos ou interrupções. Novas instruções devem receber opcodes não usados, atualizar a tabela de [ISA.md](ISA.md), e preservar a regra de uma instrução por ciclo.
 
 ## QA
 
