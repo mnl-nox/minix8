@@ -25,7 +25,7 @@ $(BUILD_DIR)/test-core: tests/test_core.c src/minix8_core.c src/minix8_core.h
 test: minix8 hexrom $(BUILD_DIR)/test-core
 	./$(BUILD_DIR)/test-core
 	python3 scripts/test_cli.py ./minix8
-	python3 -m unittest tests/test_tools.py
+	python3 -m unittest tests/test_tools.py tests/test_check_commits.py
 	python3 scripts/test_hexrom.py ./hexrom
 	python3 -m py_compile tools/minix8_gui.py tools/minix8_as.py tools/minix8_devices.py scripts/hex_to_rom.py scripts/write_sha256.py
 $(BUILD_DIR)/minix8-sanitize: src/minix8.c src/minix8_core.c src/minix8_core.h
