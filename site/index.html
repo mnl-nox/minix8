@@ -51,7 +51,7 @@
         <div class="hero-index" aria-hidden="true"><span>01</span><span>INTRODUCTION</span><span>—</span></div>
       </section>
 
-      <section class="ticker" aria-label="Resumo do hardware"><span>8-BIT VIRTUAL CPU</span><i>✳</i><span>64 KB RAM</span><i>✳</i><span>25 OPCODES</span><i>✳</i><span>ZERO CORE DEPENDENCIES</span><i>✳</i><span>BUILT FOR C11</span></section>
+      <section class="ticker" aria-label="Resumo do hardware"><span>8-BIT VIRTUAL CPU</span><i>✳</i><span>64 KB RAM</span><i>✳</i><span>39 OPCODES</span><i>✳</i><span>ZERO CORE DEPENDENCIES</span><i>✳</i><span>BUILT FOR C11</span></section>
 
       <section class="section system-section" id="sistema">
         <div class="section-heading"><p class="eyebrow">01 / O SISTEMA</p><h2>Um computador inteiro.<br><span>Uma ideia de cada vez.</span></h2></div>
@@ -70,10 +70,10 @@
         <div class="spec-grid">
           <article class="spec-card"><span>PROCESSADOR</span><strong>8<span>bit</span></strong><p>CPU interpretada · registradores A, B, C, D</p></article>
           <article class="spec-card"><span>MEMÓRIA</span><strong>64<span>KiB</span></strong><p>Espaço de endereçamento de 16 bits</p></article>
-          <article class="spec-card"><span>INSTRUÇÕES</span><strong>25</strong><p>Aritmética, lógica, saltos, pilha e console</p></article>
+          <article class="spec-card"><span>INSTRUÇÕES</span><strong>39</strong><p>Aritmética, lógica, saltos, pilha, console e leitura do contador</p></article>
           <article class="spec-card"><span>PLATAFORMAS</span><strong>3</strong><p>Linux x86-64 · macOS ARM64 · Windows x86-64</p></article>
         </div>
-        <div class="spec-foot"><span>UM CICLO POR INSTRUÇÃO</span><span>ROM RAW · LITTLE-ENDIAN</span><span>SEM PERIFÉRICOS TEMPORIZADOS</span></div>
+        <div class="spec-foot"><span>UM CICLO POR INSTRUÇÃO</span><span>ROM RAW · LITTLE-ENDIAN</span><span>CONTADOR DE INSTRUÇÕES DETERMINÍSTICO</span></div>
       </section>
 
       <section class="section workstation-section" id="interface">
@@ -92,8 +92,8 @@
       <section class="section system-section" id="perifericos">
         <div class="section-heading"><p class="eyebrow">03 / DISPOSITIVOS & PROGRAMAÇÃO</p><h2>Conheça o que está <span>conectado.</span></h2></div>
         <div class="system-grid">
-          <div><p class="body-large">A GUI inclui um inventário somente leitura do hardware que Linux, macOS ou Windows publicam. Ele ajuda a inspecionar o computador hospedeiro; não adiciona esses dispositivos à máquina virtual.</p><p>Hoje o programa virtual usa console byte a byte por <code>IN</code>/<code>OUT</code>. A ISA ainda não tem NIC, armazenamento guest, USB passthrough, framebuffer, áudio, interrupções ou temporizadores. O scanner pode listar classes como rede, disco, entrada, áudio, vídeo, serial, Bluetooth e USB/PCI quando o host oferece esses dados.</p><p>Escreva assembly MiniX8, monte uma ROM e abra-a na bancada gráfica. A entrada UTF-8 chega à CPU como bytes; o código deve ler cada byte com <code>IN</code>.</p><div class="download-actions"><a class="button outline" href="docs/DEVICES.md">MATRIZ DE PERIFÉRICOS <span aria-hidden="true">↗</span></a><a class="button outline" href="docs/ASSEMBLY.md">GUIA DE PROGRAMAÇÃO <span aria-hidden="true">↗</span></a></div></div>
-          <div class="feature-list"><article><span class="feature-no">01</span><div><h3>Disponível agora</h3><p>CPU/RAM virtuais, console IN/OUT, GUI de depuração e inventário de dispositivos do host em modo somente leitura.</p></div></article><article><span class="feature-no">02</span><div><h3>Referência MINIX 3</h3><p>Documentação externa sobre drivers separados, abstrações de dispositivos e protocolo de rede. É orientação de arquitetura, não compatibilidade binária.</p></div></article><article><span class="feature-no">03</span><div><h3>Próximas possibilidades</h3><p>UART virtual, teclado, timer, framebuffer, disco em arquivo e adaptador de rede mediado pelo host; nenhum deles é anunciado como implementado.</p></div></article></div>
+          <div><p class="body-large">A GUI inclui um inventário somente leitura do hardware que Linux, macOS ou Windows publicam. Ele ajuda a inspecionar o computador hospedeiro; não adiciona esses dispositivos à máquina virtual.</p><p>Hoje o programa virtual usa console byte a byte por <code>IN</code>/<code>OUT</code>. A ISA inclui `GETCYC` e `GETCYH` para leitura determinística do contador de instruções, mas ainda não tem timer de tempo real, interrupções, NIC, armazenamento guest, USB passthrough, framebuffer ou áudio. O scanner pode listar classes como rede, disco, entrada, áudio, vídeo, serial, Bluetooth e USB/PCI quando o host oferece esses dados.</p><p>Escreva assembly MiniX8, monte uma ROM e abra-a na bancada gráfica. A entrada UTF-8 chega à CPU como bytes; o código deve ler cada byte com <code>IN</code>.</p><div class="download-actions"><a class="button outline" href="docs/DEVICES.md">MATRIZ DE PERIFÉRICOS <span aria-hidden="true">↗</span></a><a class="button outline" href="docs/ASSEMBLY.md">GUIA DE PROGRAMAÇÃO <span aria-hidden="true">↗</span></a></div></div>
+          <div class="feature-list"><article><span class="feature-no">01</span><div><h3>Disponível agora</h3><p>CPU/RAM virtuais, console IN/OUT, leitura determinística do contador, GUI de depuração e inventário de dispositivos do host em modo somente leitura.</p></div></article><article><span class="feature-no">02</span><div><h3>Referência MINIX 3</h3><p>Documentação externa sobre drivers separados, abstrações de dispositivos e protocolo de rede. É orientação de arquitetura, não compatibilidade binária.</p></div></article><article><span class="feature-no">03</span><div><h3>Próximas possibilidades</h3><p>Timer virtual, interface de console desacoplada, framebuffer, disco em arquivo e adaptador de rede mediado pelo host; nenhum deles é anunciado como implementado.</p></div></article></div>
         </div>
         <p class="body-large"><a href="docs/REFERENCES.md">Referências técnicas MINIX 3 e livros de Andrew S. Tanenbaum →</a></p>
       </section>
