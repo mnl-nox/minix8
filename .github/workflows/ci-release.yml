@@ -136,7 +136,19 @@ jobs:
         env:
           REQUIRE_ALL_PLATFORMS: '1'
         run: make iso ISO_BIN_DIR=dist/platforms
+      - name: Stage a readable kernel for the bootable VM ISO
+        shell: bash
+        run: |
+          kernel="$(ls -1v /boot/vmlinuz-*-generic 2>/dev/null | tail -n 1)"
+          if [ -z "$kernel" ] || [ ! -f "$kernel" ]; then
+            echo "No generic Linux kernel package was installed for the VM ISO." >&2
+            exit 1
+          fi
+          sudo install -m 0644 "$kernel" "$RUNNER_TEMP/minix8-vmlinuz"
+          echo "MINIX8_KERNEL=$RUNNER_TEMP/minix8-vmlinuz" >> "$GITHUB_ENV"
       - name: Build bootable VM ISO
+        env:
+          KERNEL: ${{ env.MINIX8_KERNEL }}
         run: make boot-iso
       - uses: actions/upload-artifact@v4
         with:
