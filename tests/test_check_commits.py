@@ -1,5 +1,4 @@
 """Regression tests for Conventional Commit range validation."""
-import os
 import subprocess
 import sys
 import tempfile
@@ -23,8 +22,8 @@ class CheckCommitsTests(unittest.TestCase):
         git(self.repo, "init", "-q", "-b", "main")
         git(self.repo, "config", "user.name", "CI Test")
         git(self.repo, "config", "user.email", "ci-test@example.invalid")
-        (self.repo / "file.txt").write_text("base\n", encoding="utf-8")
-        git(self.repo, "add", "file.txt")
+        (self.repo / "base.txt").write_text("base\n", encoding="utf-8")
+        git(self.repo, "add", "base.txt")
         git(self.repo, "commit", "-m", "chore: initialize test repository")
         self.base = git(self.repo, "rev-parse", "HEAD")
 
@@ -32,8 +31,9 @@ class CheckCommitsTests(unittest.TestCase):
         self.temp.cleanup()
 
     def commit(self, message: str, content: str):
-        (self.repo / "file.txt").write_text(content, encoding="utf-8")
-        git(self.repo, "add", "file.txt")
+        path = self.repo / (content.strip().replace(" ", "-") + ".txt")
+        path.write_text(content, encoding="utf-8")
+        git(self.repo, "add", path.name)
         git(self.repo, "commit", "-m", message)
         return git(self.repo, "rev-parse", "HEAD")
 
@@ -48,9 +48,9 @@ class CheckCommitsTests(unittest.TestCase):
 
     def test_merge_commit_subject_is_ignored_but_work_commits_are_checked(self):
         git(self.repo, "checkout", "-q", "-b", "feature")
-        feature = self.commit("fix(core): handle edge case", "feature\n")
+        self.commit("fix(core): handle edge case", "feature\n")
         git(self.repo, "checkout", "-q", "main")
-        main = self.commit("docs: explain test fixture", "main\n")
+        self.commit("docs: explain test fixture", "main\n")
         git(self.repo, "merge", "--no-ff", "feature", "-m", "Merge pull request #42 from example/feature")
 
         result = self.check(self.base, "HEAD")
