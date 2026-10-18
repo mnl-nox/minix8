@@ -105,7 +105,7 @@ jobs:
         include:
           - distro: Debian stable
             image: debian:stable-slim
-            install: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends gcc make
+            install: apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends gcc make libc6-dev
           - distro: Fedora
             image: fedora:latest
             install: dnf install -y gcc make
@@ -151,6 +151,8 @@ jobs:
               break
             elif [[ "$subject" =~ ^feat(\([^)]*\))?: ]] && [[ "$bump" != major ]]; then
               bump=minor
+            elif [[ "$subject" =~ ^fix(\([^)]*\))?: ]] && [[ -z "$bump" ]]; then
+              bump=patch
             fi
           done <<< "$commits"
           if [ -n "$bump" ]; then
@@ -165,14 +167,21 @@ jobs:
         shell: bash
         run: |
           latest="$(git tag --list 'v[0-9]*' --sort=-version:refname | head -n 1)"
-          if [ -z "$latest" ]; then latest="v$(sed -n 's/^project(MiniX8 VERSION \([^ ]*\).*/\1/p' CMakeLists.txt)"; fi
-          version="${latest#v}"
-          IFS=. read -r major minor patch <<< "$version"
-          case "${{ steps.version.outputs.bump }}" in
-            major) major=$((major + 1)); minor=0; patch=0 ;;
-            minor) minor=$((minor + 1)); patch=0 ;;
-            *) echo "No valid release bump was selected." >&2; exit 1 ;;
-          esac
+          if [ -z "$latest" ]; then
+            # The first release uses the project version as its baseline.
+            version="$(sed -n 's/^project(MiniX8 VERSION \([^ ]*\).*/\1/p' CMakeLists.txt)"
+            if [ -z "$version" ]; then echo "Could not read project version from CMakeLists.txt" >&2; exit 1; fi
+            IFS=. read -r major minor patch <<< "$version"
+          else
+            version="${latest#v}"
+            IFS=. read -r major minor patch <<< "$version"
+            case "${{ steps.version.outputs.bump }}" in
+              major) major=$((major + 1)); minor=0; patch=0 ;;
+              minor) minor=$((minor + 1)); patch=0 ;;
+              patch) patch=$((patch + 1)) ;;
+              *) echo "No valid release bump was selected." >&2; exit 1 ;;
+            esac
+          fi
           tag="v${major}.${minor}.${patch}"
           if git rev-parse "$tag" >/dev/null 2>&1; then echo "Tag $tag already exists" >&2; exit 1; fi
           git config user.name "github-actions[bot]"

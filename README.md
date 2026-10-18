@@ -38,7 +38,7 @@ docker run --rm minix8 --help
 docker run --rm -it -v "$PWD:/rom:ro" minix8 --rom /rom/program.bin
 ```
 
-Podman pode usar os mesmos comandos. No Windows, monte o diretório da ROM com a sintaxe de volume do Docker Desktop.
+O build compila o programa e executa `make test`. A imagem final roda como usuário sem privilégios e contém apenas o executável. Podman aceita os mesmos comandos. Consulte o [guia Docker/Podman](docs/DOCKER.md) para dependências, execução e erros de acesso ao daemon ou namespaces. No Windows, monte a pasta da ROM com a sintaxe de volume do Docker Desktop.
 
 ## Usar
 
@@ -87,6 +87,7 @@ Os testes CLI criam ROMs temporárias e verificam execução, entrada/saída, en
 - [ISA](docs/ISA.md): opcodes, operandos, flags e convenções binárias.
 - [Contribuição e mensagens de commit](CONTRIBUTING.md): fluxo de PR e regras Conventional Commits.
 - [CI/CD, QA e releases](docs/RELEASING.md): testes, sanitizers, matriz de builds, gatilhos e publicação de versões.
+- [Docker e Podman](docs/DOCKER.md): dependências da imagem, testes durante o build, usuário sem privilégios e diagnóstico do host.
 - [Política e limites de segurança](SECURITY.md): modelo de ameaça e canal de relato.
 
 O CI compila em Ubuntu 22.04 x86-64, macOS 14 ARM64 e Windows Server 2022 x86-64; também compila o núcleo em Debian stable e Fedora. Pushes e PRs executam a validação e os builds. Para publicar automaticamente, integre na `main` via squash um commit `feat: ...` (gera versão minor) ou uma mudança incompatível marcada com `!`/`BREAKING CHANGE:` (gera versão major). Os executáveis correspondentes são anexados à release no GitHub.

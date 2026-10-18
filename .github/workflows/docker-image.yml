@@ -1,0 +1,22 @@
+name: Container image
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  image:
+    name: Build, test, and smoke-test Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image (Dockerfile runs make test)
+        run: docker build --tag minix8:ci .
+      - name: Smoke-test runtime as unprivileged user
+        run: docker run --rm --entrypoint /bin/sh minix8:ci -ec 'test "$(id -u)" = "65532"; exec /usr/local/bin/minix8 --help'
