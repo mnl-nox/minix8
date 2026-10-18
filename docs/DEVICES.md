@@ -60,4 +60,4 @@ Drivers de MINIX 3 rodam como componentes de seu próprio sistema, usam APIs e p
 - [MINIX 3 em QEMU/KVM](https://wiki.minix3.org/doku.php?id=usersguide:runningonqemu): exemplo de dispositivos virtio em MINIX 3.
 - [Livros e outras referências](REFERENCES.md).
 
-Veja também [TOOLS.md](TOOLS.md), [ARCHITECTURE.md](ARCHITECTURE.md) e [SECURITY_AUDIT.md](../SECURITY_AUDIT.md).
+Veja também o [roadmap e issues de implementação](ROADMAP.md), [TOOLS.md](TOOLS.md), [ARCHITECTURE.md](ARCHITECTURE.md) e [SECURITY_AUDIT.md](../SECURITY_AUDIT.md).
