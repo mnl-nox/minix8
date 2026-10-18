@@ -2,7 +2,7 @@
 
 ![Logo do MiniX8: um microcomputador 8-bit com monitor verde fósforo](site/logo.svg)
 
-MiniX8 é uma máquina virtual didática completa de 8 bits: CPU, 64 KiB de memória, pilha, flags, entrada e saída de terminal, carregador de ROM e monitor de depuração. O núcleo é C11 sem dependências de terceiros, então roda nativamente em Linux (Debian/Ubuntu, Fedora/RHEL e derivados), Windows e em containers. Também pode ser compilado e executado dentro de VMs Linux ou Windows.
+MiniX8 é uma máquina virtual didática de 8 bits: CPU, 64 KiB de memória, pilha, flags, entrada e saída de terminal, carregador de ROM e monitor de depuração. O núcleo é C11 sem dependências de terceiros, então roda nativamente em Linux (Debian/Ubuntu, Fedora/RHEL e derivados), Windows e em containers. Também pode ser compilado e executado dentro de VMs Linux ou Windows. A versão publicada atual é [v1.1.0](https://github.com/mnl-nox/minix8/releases/tag/v1.1.0); consulte a página de [releases](https://github.com/mnl-nox/minix8/releases) para downloads e checksums.
 
 ## Compilar
 
@@ -145,4 +145,4 @@ O [site do MiniX8](https://mnl-nox.github.io/minix8/) reúne visão geral do pro
 - [Guia de uso passo a passo](docs/USER_GUIDE.md) e [manual completo dos comandos do monitor e da CPU](docs/COMMANDS.md).
 - [Guia da mídia bootável para VM](docs/BOOTABLE_VM.md), [ferramentas](docs/TOOLS.md) e [ajuda do shell live](docs/VM-HELP.txt).
 
-O CI compila em Ubuntu 22.04 x86-64, macOS 14 ARM64 e Windows Server 2022 x86-64; também compila o núcleo em Debian stable e Fedora. Pushes e PRs executam a validação e os builds. Para publicar automaticamente, integre na `main` via squash um commit `feat: ...` (gera versão minor) ou uma mudança incompatível marcada com `!`/`BREAKING CHANGE:` (gera versão major). Os executáveis correspondentes são anexados à release no GitHub.
+O CI compila em Ubuntu 22.04 x86-64, macOS 14 ARM64 e Windows Server 2022 x86-64; também compila o núcleo em Debian stable e Fedora. Pushes e PRs executam a validação e os builds. Para publicar automaticamente, integre na `main` via squash usando Conventional Commits: `fix:` gera PATCH, `feat:` gera MINOR e uma mudança incompatível marcada com `!`/`BREAKING CHANGE:` gera MAJOR. Os demais tipos passam pelo CI sem criar release. A versão publicada atual é `v1.1.0`; os executáveis, ISOs e checksums produzidos pelo workflow são anexados à release no GitHub.
