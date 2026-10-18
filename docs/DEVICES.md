@@ -22,7 +22,7 @@ O inventário pode listar categorias como armazenamento, rede, entrada, áudio, 
 | Terminal/TTY | Entrada e saída byte a byte por `IN`/`OUT`; sem registradores de dispositivo | Formalizar UART virtual, baud/timing opcionais e buffers limitados. |
 | Teclado | Não há dispositivo independente; texto enviado pela GUI alimenta `IN` | Eventos de tecla normalizados ligados a uma UART/console virtual. |
 | Vídeo/framebuffer | Não há framebuffer; GUI é apenas painel de controle | Dispositivo framebuffer com formato, dimensões, limites de memória e atualização documentados. |
-| Temporizador/interrupções | Não há temporizador nem interrupções; ciclos contam instruções tentadas | Timer determinístico de instruções e fila de eventos antes de considerar interrupções. |
+| Temporizador/interrupções | Parcial: `GETCYC`/`GETCYH` expõem os 16 bits baixos do contador de instruções; não há relógio de parede, timer independente ou interrupções | Evoluir para timer virtual explícito e fila determinística de eventos antes de considerar interrupções. |
 | Armazenamento em bloco | Não há disco virtual, filesystem guest ou passthrough | Imagem de disco explicitamente selecionada, operações limitadas por faixa e somente sobre o arquivo da VM. |
 | Rede | Não há NIC, pilha TCP/IP, sockets ou tráfego de pacotes do guest | Adaptador virtual mediado pelo host (por exemplo, backend UDP ou rede isolada), com permissões explícitas e limites de tráfego. |
 | Áudio, USB, Bluetooth, sensores | Não há emulação nem passthrough | Interfaces virtuais por classe, cada uma com especificação, autorização, limites e testes próprios. |
