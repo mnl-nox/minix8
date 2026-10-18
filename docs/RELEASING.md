@@ -22,7 +22,7 @@ Os artefatos de cada build ficam disponíveis no run do Actions durante 30 dias.
 
 ## Regra de versionamento
 
-O job de release verifica todos os commits que chegaram à `main` no push:
+O job de release verifica todos os commits entre a última tag SemVer e o `HEAD` de `main` (não apenas o último push). Assim, uma execução cancelada ou falha não faz uma `feat` ficar esquecida. Também é possível executar `workflow_dispatch` em `main` para recuperar uma release pendente, após os checks passarem:
 
 - `feat: ...` ou `feat(escopo): ...` incrementa MINOR;
 - `fix: ...` ou `fix(escopo): ...` incrementa PATCH;
@@ -43,9 +43,9 @@ O executável Linux foi compilado em Ubuntu 22.04 para compatibilidade de glibc 
 1. Faça commits com assunto Conventional Commit.
 2. Abra PR contra `main` e aguarde todos os checks verdes (validação de mensagens, QA com testes/análise/sanitizers, três builds/testes nativos e dois builds Linux em containers).
 3. Use **Squash and merge** e mantenha o título do squash no formato Conventional Commit, como `feat(cpu): add rotate instruction`.
-4. O push resultante à `main` executa a publicação para títulos `fix`, `feat` ou breaking change. A tag e a release aparecem na aba Releases do repositório.
+4. O push resultante à `main` executa a publicação quando houver commits `fix`, `feat` ou breaking change desde a última tag. Se um run tiver falhado/cancelado, execute manualmente **Actions → CI and release → Run workflow** na branch `main`; o workflow recalcula a faixa desde a última tag e publica a versão pendente depois que todos os checks passarem.
 
-Squash merge mantém o assunto que aciona a release claro e evita títulos automáticos de merge que não seguem o formato aceito. Se a publicação falhar por tag duplicada, revise as tags existentes e corrija manualmente a sequência SemVer antes de reexecutar o workflow.
+Squash merge mantém o assunto que aciona a release claro e evita títulos automáticos de merge que não seguem o formato aceito. Execuções da branch `main` não cancelam umas às outras. A decisão de versionamento sempre parte da última tag publicada; assim, `feat` pendentes são recuperadas mesmo que o push que as introduziu não tenha concluído a release. Se a publicação falhar por tag duplicada, investigue a tag existente antes de reexecutar o workflow.
 
 ## Permissões necessárias
 
