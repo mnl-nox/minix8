@@ -75,7 +75,7 @@ Comandos: `help`, `regs`, `step [n]`, `run [n]`, `reset`, `load arquivo [endere�
 
 Para um programa mínimo que imprime `Oi!`, os bytes são `01 4F 19 01 69 19 01 21 19 1A` (LDA #O, OUT A, LDA #i, OUT A, LDA #!, OUT A, HLT). Salve-os em `oi.bin` e rode `./minix8 --rom oi.bin`.
 
-Veja o conjunto completo de instruções em [docs/ISA.md](docs/ISA.md).
+Veja o conjunto completo de instruções em [docs/ISA.md](docs/ISA.md). A ISA inclui `GETCYC` e `GETCYH`, que permitem ao programa ler os 16 bits inferiores do contador de instruções para medições determinísticas.
 
 ## Assembly e dispositivos
 
@@ -130,14 +130,14 @@ O código original do MiniX8 é distribuído sob a **GNU General Public License 
 ## Documentação e contribuição
 
 - [Arquitetura da máquina](docs/ARCHITECTURE.md): componentes, ciclo de CPU e limites implementados.
-- [ISA](docs/ISA.md): opcodes, operandos, flags e convenções binárias.
+- [ISA](docs/ISA.md): opcodes, operandos, flags, contador de instruções e convenções binárias.
 - [Contribuição e mensagens de commit](CONTRIBUTING.md): fluxo de PR e regras Conventional Commits.
 - [CI/CD, QA e releases](docs/RELEASING.md): testes, sanitizers, matriz de builds, gatilhos e publicação de versões.
 - [Docker e Podman](docs/DOCKER.md): dependências da imagem, testes durante o build, usuário sem privilégios e diagnóstico do host.
 - [Política e limites de segurança](SECURITY.md): modelo de ameaça e canal de relato.
 - [Limitações](docs/QA.md), [erros e diagnósticos](docs/ERRORS.md), [formato ISO](docs/ISO.md) e [site do projeto](site/index.html).
 - [Interface gráfica desktop](docs/GUI.md).
-- [Dispositivos: suporte atual, integração e possibilidades](docs/DEVICES.md) e [referências MINIX 3/livros de Andrew S. Tanenbaum](docs/REFERENCES.md).
+- [Dispositivos: suporte atual, integração e possibilidades](docs/DEVICES.md), [roadmap de periféricos](https://github.com/mnl-nox/minix8/issues/15) e [referências MINIX 3/livros de Andrew S. Tanenbaum](docs/REFERENCES.md).
 - [Guia de uso passo a passo](docs/USER_GUIDE.md) e [manual completo dos comandos do monitor e da CPU](docs/COMMANDS.md).
 - [Guia da mídia bootável para VM](docs/BOOTABLE_VM.md), [ferramentas](docs/TOOLS.md) e [ajuda do shell live](docs/VM-HELP.txt).
 
