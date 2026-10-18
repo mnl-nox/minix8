@@ -21,7 +21,10 @@
         <a href="#interface">Interface</a>
         <a href="#perifericos">Periféricos</a>
         <a href="#downloads">Downloads</a>
-        <a href="#desenvolvimento">Desenvolvimento</a>
+        <a href="#desenvolvimento">Manuais</a>
+        <a href="#sobre">Sobre</a>
+        <a href="#curiosidades">Curiosidades</a>
+        <a href="#faq">FAQ</a>
       </nav>
       <a class="issue-link" id="issue-link" href="#issues">REPORTAR BUG <span aria-hidden="true">↗</span></a>
     </header>
@@ -130,6 +133,67 @@
           <a href="docs/RELEASING.md"><span>MANUAL 14</span><b>Build & releases</b><small>CI, versões e pacotes.</small><i>↗</i></a>
           <a href="SECURITY.md"><span>MANUAL 15</span><b>Segurança</b><small>Ameaças, limites e relatos.</small><i>↗</i></a>
         </div>
+      </section>
+
+      <section class="section about-section" id="sobre">
+        <div class="section-heading"><p class="eyebrow">06 / ORIGEM, AUTORIA & PROPÓSITO</p><h2>Entenda a máquina.<br><span>Não apenas use-a.</span></h2></div>
+        <div class="about-grid">
+          <article class="about-story"><p class="body-large">MiniX8 é um projeto independente de computação educacional: uma CPU virtual de 8 bits construída para tornar visíveis conceitos que costumam ficar escondidos atrás de sistemas operacionais, compiladores e hardware moderno.</p>
+          <p>A ideia central é reduzir a escala sem reduzir a precisão didática. O núcleo em C11 executa uma ISA documentada, com 64 KiB de memória, registradores, flags, pilha, console e monitor de depuração. O projeto também reúne assembler em Python, interface desktop, exemplos, testes automatizados e distribuição multiplataforma.</p>
+          <p>O repositório público registra a evolução técnica por commits, issues, pull requests, documentação e releases. O histórico público é a fonte apropriada para acompanhar como o projeto evolui.</p></article>
+          <aside class="author-card"><span class="feature-no">AUTORIA</span><h3>mnl-nox</h3><p>Autor e mantenedor identificado pelo perfil público do repositório GitHub.</p><a href="https://github.com/mnl-nox">Perfil público ↗</a><hr><span class="feature-no">ÁREAS DO PROJETO</span><ul><li>Arquitetura de CPU e ISA</li><li>C11, testes e sanitizers</li><li>Assembler e automação Python</li><li>GUI de depuração com Tkinter</li><li>Distribuição, CI/CD e documentação</li></ul><p class="small-note">Esta seção descreve as áreas técnicas demonstradas no repositório; não atribui ao autor credenciais ou biografia pessoal não publicadas.</p></aside>
+        </div>
+      </section>
+
+      <section class="section curiosity-section" id="curiosidades">
+        <div class="section-heading"><p class="eyebrow">07 / CURIOSIDADES</p><h2>Pequena por fora.<br><span>Completa o bastante para estudar.</span></h2></div>
+        <div class="curiosity-grid">
+          <article><span>01 / ESCALA</span><h3>64 KiB inteiros</h3><p>Com endereços de 16 bits, a máquina pode endereçar 65.536 posições de byte. É um espaço pequeno o bastante para inspecionar diretamente.</p></article>
+          <article><span>02 / EXECUÇÃO</span><h3>Tempo determinístico</h3><p>O contador acompanha instruções executadas, não segundos de relógio. Isso permite experimentos repetíveis sem confundir ciclos virtuais com tempo real.</p></article>
+          <article><span>03 / CÓDIGO</span><h3>Bytes viram comportamento</h3><p>Uma ROM de exemplo usa dez bytes para imprimir “Oi!” e parar. O formato e os opcodes podem ser estudados em vez de tratados como caixa-preta.</p></article>
+          <article><span>04 / HISTÓRIA</span><h3>Inspirado pela computação clássica</h3><p>A estética de 1987 é uma escolha visual e didática. MiniX8 não é um computador histórico restaurado nem uma implementação do MINIX 3.</p></article>
+        </div>
+      </section>
+
+      <section class="section reading-section" id="bibliografia">
+        <div class="section-heading"><p class="eyebrow">08 / BIBLIOTECA DE ESTUDO</p><h2>Livros para construir <span>fundamentos.</span></h2></div>
+        <div class="reading-grid">
+          <article><span>ARQUITETURA DE SISTEMAS</span><h3>Structured Computer Organization</h3><p><b>Andrew S. Tanenbaum e Todd Austin.</b> Base para entender níveis de abstração, representação de dados, processadores, memória e organização de computadores.</p><a href="https://www.pearson.com/">Consultar editora ↗</a></article>
+          <article><span>SISTEMAS OPERACIONAIS</span><h3>Modern Operating Systems</h3><p><b>Andrew S. Tanenbaum e Herbert Bos.</b> Processos, memória, sistemas de arquivos, I/O, virtualização e segurança — conceitos que ajudam a contextualizar o hospedeiro do MiniX8.</p><a href="https://www.pearson.com/en-us/subject-catalog/p/modern-operating-systems/P200000003295/9780137618934">Página editorial ↗</a></article>
+          <article><span>IMPLEMENTAÇÃO</span><h3>Operating Systems: Design and Implementation</h3><p><b>Andrew S. Tanenbaum e Albert S. Woodhull.</b> Aproxima conceitos de sistemas operacionais de código e decisões concretas, incluindo a experiência MINIX.</p><a href="https://www.informit.com/store/operating-systems-design-and-implementation-9780131429383">Página editorial ↗</a></article>
+          <article><span>PRÁTICA NO REPOSITÓRIO</span><h3>Leia, compile, altere e teste</h3><p>Comece por arquitetura, ISA e guia do usuário. Depois altere um programa assembly, rode testes e acompanhe a mudança no controle de versão.</p><a href="docs/REFERENCES.md">Ver bibliografia completa ↗</a></article>
+        </div>
+        <p class="small-note">A importância desses livros está nos fundamentos duradouros: abstração, representação, execução, memória, I/O e sistemas. O MiniX8 é um laboratório complementar, não substituto de livros, hardware real ou sistemas operacionais completos.</p>
+      </section>
+
+      <section class="section screenshot-section" id="capturas">
+        <div class="section-heading"><p class="eyebrow">09 / CAPTURAS DO PROJETO</p><h2>Veja a interface. <span>Confira o código.</span></h2></div>
+        <div class="screenshot-notice"><div><h3>Prévia visual da bancada</h3><p>A bancada abaixo é uma prévia visual construída a partir dos componentes reais da GUI; não é uma captura de tela fotográfica do aplicativo em execução. Não queremos apresentar uma ilustração como evidência de execução real.</p><a class="button outline" href="docs/GUI.md">Como executar a GUI ↗</a></div><div class="capture-terminal"><div class="capture-bar">MINIX8 MONITOR · EXEMPLO DE SAÍDA</div><pre>minix8&gt; run
+Oi!
+A=21 B=00 C=00 D=00 PC=000A SP=FFFF
+FLAGS=--- CICLOS=7 HALT
+minix8&gt; regs
+READY</pre><small>Saída esperada do exemplo hello; execute o binário para verificar no seu ambiente.</small></div></div>
+        <div class="screenshot-cta"><p>Para publicar capturas genuínas, execute a GUI ou o terminal no Linux/macOS/Windows e envie imagens da janela real. O repositório ainda não contém arquivos de captura verificados do aplicativo em execução.</p><a href="https://github.com/mnl-nox/minix8/issues/new/choose" class="text-link">Acompanhar/abrir issue para capturas reais ↗</a></div>
+      </section>
+
+      <section class="section faq-section" id="faq">
+        <div class="section-heading"><p class="eyebrow">10 / FAQ — DÚVIDAS FREQUENTES</p><h2>Respostas <span>diretas.</span></h2></div>
+        <div class="faq-list">
+          <details><summary>MiniX8 é um sistema operacional completo?</summary><p>Não. É uma máquina virtual didática de 8 bits. A ISO bootável contém um ambiente Linux mínimo hospedeiro que executa o emulador.</p></details>
+          <details><summary>É compatível com MINIX 3?</summary><p>Não. MINIX 3 é uma referência de estudo para conceitos de sistemas operacionais e drivers; MiniX8 tem arquitetura e ISA próprias.</p></details>
+          <details><summary>Preciso conhecer C para começar?</summary><p>Não para executar exemplos. Para estudar o núcleo ou contribuir com a CPU, conhecimento progressivo de C é recomendado. Python é usado nas ferramentas auxiliares.</p></details>
+          <details><summary>Como começo a programar?</summary><p>Leia o guia do usuário e o manual de assembly, monte <code>examples/hello.asm</code> e execute a ROM com o binário MiniX8. A GUI também pode carregar fontes .asm e ROMs.</p></details>
+          <details><summary>O MiniX8 controla os dispositivos físicos do computador?</summary><p>Não. O inventário de hardware do hospedeiro é somente leitura. A CPU virtual não recebe passthrough de USB, rede, áudio ou armazenamento físico.</p></details>
+          <details><summary>O que significa o contador de instruções?</summary><p>É uma contagem determinística de instruções executadas, não um cronômetro de tempo real. GETCYC e GETCYH expõem os 16 bits inferiores.</p></details>
+          <details><summary>Qual é a licença?</summary><p>O código original está sob GPL-3.0-or-later. Componentes externos mantêm suas licenças; consulte LICENSE e THIRD_PARTY_NOTICES.md.</p></details>
+          <details><summary>Como reporto um problema ou proponho recurso?</summary><p>Abra uma issue no GitHub, informe versão, sistema operacional, passos para reproduzir e saída relevante. Para mudanças de código, consulte CONTRIBUTING.md.</p></details>
+        </div>
+      </section>
+
+      <section class="section newsletter-section" id="newsletter">
+        <div><p class="eyebrow">11 / NEWSLETTER & ATUALIZAÇÕES</p><h2>Novidades técnicas.<br><span>Sem ruído.</span></h2><p>Receba as novidades acompanhando as publicações oficiais do projeto. Como o site é estático, esta versão não coleta endereços de e-mail nem simula uma inscrição; use o feed Atom das releases ou siga o repositório para acompanhar versões, notas e mudanças.</p></div>
+        <div class="newsletter-actions"><a class="button primary" href="https://github.com/mnl-nox/minix8/releases.atom">ASSINAR FEED ATOM ↗</a><a class="button outline" href="https://github.com/mnl-nox/minix8">SEGUIR NO GITHUB ↗</a><a class="text-link" href="https://github.com/mnl-nox/minix8/releases">Ver histórico de releases →</a></div>
       </section>
 
       <section class="issue-banner" id="issues"><div class="section issue-inner"><div><p class="eyebrow">SINAL ENCONTRADO?</p><h2>Ajude a manter o<br><span>computador saudável.</span></h2><p>Reporte falhas com versão, sistema, passos para reproduzir e saída do terminal. Labels ajudam a organizar CPU, ROM, monitor, documentação e builds.</p></div><a class="button primary" id="new-issue-link" href="#issues">ABRIR ISSUE <span aria-hidden="true">↗</span></a></div></section>
