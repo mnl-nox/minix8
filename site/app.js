@@ -1,6 +1,6 @@
 (() => {
   const repo = window.MINIX8_REPOSITORY || "";
-  const version = window.MINIX8_VERSION || "1.0.0";
+  const version = window.MINIX8_VERSION || "1.1.0";
   document.querySelectorAll("[data-version]").forEach((node) => { node.textContent = `v${version}`; });
   const usableRepo = repo && !repo.includes("__REPOSITORY__") && repo.includes("/");
   const issueLink = document.querySelector("#issue-link");
