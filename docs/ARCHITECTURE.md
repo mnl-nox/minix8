@@ -19,11 +19,11 @@ MiniX8 é uma máquina virtual de processo único. O programa hospedeiro contém
 4. A CPU atualiza registradores, flags, memória, pilha, console ou PC.
 5. Um opcode inválido, erro de pilha ou falha de I/O reporta o endereço e interrompe a execução.
 
-O contador de ciclos é um contador de instruções tentadas, não uma simulação de frequência ou tempo real. Ramos condicionais contam como uma instrução, assim como todos os demais opcodes; uma instrução que falha também é contada.
+O contador de ciclos é um contador de instruções tentadas, não uma simulação de frequência ou tempo real. Ramos condicionais contam como uma instrução, assim como todos os demais opcodes; uma instrução que falha também é contada. `GETCYC` (`0x25`) lê os 8 bits inferiores e `GETCYH` (`0x26`) lê os bits 8–15 do contador, depois de contabilizar a instrução atual. As instruções atualizam as flags N/Z e não criam um timer, eventos assíncronos ou interrupções.
 
 ## Decisões e limites atuais
 
-- Sem MMU, modos privilegiados, interrupções, DMA, temporizadores ou periféricos de vídeo/áudio.
+- Sem MMU, modos privilegiados, interrupções, DMA, timer de tempo real ou periféricos de vídeo/áudio. `GETCYC`/`GETCYH` oferecem somente leitura determinística do contador de instruções.
 - `tools/minix8_as.py` gera assembly da ISA virtual; não é assembly nativo do host. O núcleo C11 portátil permanece o backend para todos os sistemas.
 - Sem MMU, permissões de memória por ROM ou isolamento de processos; ROMs são limitadas ao modelo de 64 KiB e ao orçamento de instruções, mas execute apenas código de procedência confiável se a integridade do processo hospedeiro for importante.
 - Sem temporização de console e sem modo raw de terminal; IN usa a semântica de stdin do sistema hospedeiro.
